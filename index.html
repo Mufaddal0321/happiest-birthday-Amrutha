@@ -1,0 +1,195 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Amrutha</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #e9d6f2;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+    h1 {
+      text-align: center;
+      color: #6b0e8b;
+      padding: 20px;
+    }
+    .cake {
+      display: block;
+      margin: 0 auto;
+      max-width: 300px;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+    .cake:hover {
+      transform: scale(1.05);
+    }
+    .pastries {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .pastry {
+      width: 120px;
+      height: 120px;
+      background-color: #fff0fb;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s;
+    }
+    .pastry:hover {
+      transform: scale(1.1);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .close {
+      position: absolute;
+      top: 10px; right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .confetti {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Happy Birthday, Amrutha!</h1>
+  <img src="Screenshot 2025-06-18 222545.png" alt="Birthday Cake" class="cake" onclick="cutCake()" />
+
+  <div class="pastries" id="pastries"></div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="message"></div>
+    </div>
+  </div>
+
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <script>
+    const messages = [
+      `Sender - Madeline <br><br> Happy birthdayy bestie 🥳<br>Can’t believe it’s been 6 years of us being best friends — since 2018! You’ve been my biggest support and the one who taught me how to be brave. So so grateful for you always. Love you loads, enjoy your day!! ❤️🎉 Once Again many more happy returns of the day Amruta 🥳🥳`,
+      `Sender - skibidi <br><br> Happy Birthday to the tube-light of our gang 🎉💥<br>From playing skribble in 3rd sem to sitting in olives and pulling your legs, we've spent less time than your brain spends processing my jokes on you, yet it's memorable.<br>Thanks for finding me annoying, something not many can do.<br>Much memories to make in the upcoming year!<br>Hope your day is surprisingly beautiful 🍻.<br>Stay awesome (and slightly tolerable). 🎉😈`,
+      `Sender - Aishwarya chotu <br><br> HAPPY BIRTHDAY to my favorite person ever! 🎉💖<br>From sharing snacks in class to sharing secrets after school, you’ve been my constant — my best friend, my personal clown, and sometimes, my brutally honest therapist 😅.<br>I’ll never forget how you teased me about my one-sided crush (yes, I am finally out of it cz of your savage comments 😭), but even though you never trusted that person, you were always there — listening, comforting, dragging me back to reality when I needed it most.<br>Happy Happy birthday, my soul-sister. I love you forever! 💕🎂🎈`,
+      `Sender - Zomato boii <br><br> Hola sister! 😄<br>Hope you’re enjoying your holidays to the fullest!<br>From the very first day of engineering till now, you’ve been more than just a friend—you’ve truly been like a sister to me.<br>Thank you for being there for me, especially during the times I felt low or lost.<br>I hope this sister-brother bond between us stays strong forever. ❤️<br>Wishing you the happiest birthday ever, sister! 🥳🎉`,
+      `Sender - Arshima <br><br> To my \"Shut up\" Queen:<br>When we met in 2019, I never expected that straightforward, short-tempered, friendly girl would stay in my life for soooo long.<br>You are bold and fierce (and super pretty ♾️), and you've taught me that being real is better than being liked.<br>Happy happy birthday!🥳 Love you lots! ❤`,
+      `Sender - Nandini <br><br> Happiest Birthday Amrutha!!<br>Wishing you Years Filled with Magical Moments and Endless Joy!!!`,
+      `Sender - Nikitha <br><br> Happy Birthday Amruthaa 🥳❤️<br>To the girl who’s made of giggles, stardust, and all things lovely! ✨<br>Wishing you a day full of magic, sparkles, cake, and everything that makes you as wonderfully adorable as you are! 🎈🍰<br>And ur smile is really cute so never let it fade awayyyy!!🫶🏻🫶🏻`,
+      `Sender - Mikhael <br><br> At 20, you’re officially too old to count your age on your fingers. In dog’s year, you are dead. But you are still here. 😂<br>Although I knew you only at the end of school, it was and is still worthwhile to be with you.<br>Love you lots and Happy birthday AMMU!!!<br>WELCOME TO THE 20s…where absolutely nothing changes. 🥰😍😜`,
+      `Sender - Vaishnavi <br><br> heyyy oldy!!<br>Happy happy birthday to you!<br>I miss the time we didn’t need to plan — we just knew we’d meet.<br>You don’t know how much I cherish you and our memories! ❤️<br>Let’s catch up soon!! Tell me a day before showing up this time 😄`,
+      `Sender - Yukta <br><br> From the first day of college I felt we’d be good friends.<br>And we were! We vibed deeply and bonded over jokes, lectures, and projects.<br>Your confidence and boldness amaze me.<br>Thank you for being a friend, for clicking 10,000 pics of me 😜, and just being YOU.<br>Let’s keep this friendship forever ❤️`,
+      `Sender - Fumenim <br><br> Happy Birthday, Amrutha! 💖<br>Your smile is my favorite sunrise, your laughter is my favorite sound.<br>You make everything brighter, softer, and more beautiful.<br>Let’s make this birthday unforgettable, like the way you’ve made my world unforgettable. 💫<br>I love you forever. 💝`
+    ];
+
+    const pastriesDiv = document.getElementById('pastries');
+    const messageBox = document.getElementById('message');
+    const modal = document.getElementById('modal');
+
+    function cutCake() {
+      document.querySelector('.cake').style.display = 'none';
+      pastriesDiv.style.display = 'flex';
+      launchConfetti();
+      for (let i = 0; i < messages.length; i++) {
+        const p = document.createElement('div');
+        p.className = 'pastry';
+        p.innerText = '🍰';
+        p.onclick = () => showMessage(i);
+        pastriesDiv.appendChild(p);
+      }
+    }
+
+    function showMessage(index) {
+      messageBox.innerHTML = messages[index];
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let pieces = [];
+      for (let i = 0; i < 300; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 50,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          tilt: Math.random() * 10 - 10
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          ctx.beginPath();
+          ctx.lineWidth = p.r / 2;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt, p.y);
+          ctx.lineTo(p.x, p.y + p.tilt + p.r);
+          ctx.stroke();
+        });
+        update();
+      }
+
+      function update() {
+        for (let i = 0; i < pieces.length; i++) {
+          let p = pieces[i];
+          p.y += Math.cos(p.d) + 1 + p.r / 2;
+          p.x += Math.sin(p.d);
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        }
+      }
+
+      (function animate() {
+        draw();
+        requestAnimationFrame(animate);
+      })();
+    }
+  </script>
+</body>
+</html>
